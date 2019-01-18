@@ -1,0 +1,220 @@
+
+/* Basic layout */
+
+:root {
+	--settings-height: 20vh;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+}
+
+body {
+	background: #444;
+	text-align: center;
+}
+
+button {
+	color: #888;
+	background: none;
+	border: .3vh solid #888;
+	border-radius: 1vh;
+	outline: none;
+	cursor: pointer;
+}
+button svg {
+    display: inline-block;
+    width: 4vh;
+    vertical-align: middle;
+}
+
+
+
+
+/* Content */
+
+.content {
+	opacity: 0.3;
+	transition: opacity .5s, fill .5s;
+}
+
+body.connected .content {
+	opacity: 1;
+}
+
+
+
+
+/* Matrix editor */
+
+#editor td {
+    border: 0.3vh solid #444;
+    margin: 0;
+    padding: 0;
+}
+
+#editor {
+    margin: 8vh auto 0;
+    border-collapse: collapse;
+	width: 50vh;
+	height: 50vh;
+	
+	cursor: crosshair;
+}
+
+
+
+           
+/* Pencil and pipet mode */            
+
+#tools {
+    padding-top: 3vh;
+    width: 50vh;
+    margin: 0 auto;
+}
+
+#mode {
+    float: left;
+}
+#mode button {
+    background: #333;
+    border: none;
+    border-radius: 3vh;
+    height: 6vh;
+    width: 6vh;
+    border: .3vh solid #333;
+    transition: border-color 300ms ease;
+    margin-right: 2vh;
+}
+.pencil button#pencil {
+    border: .3vh solid #888;
+}
+.pipet button#pipet {
+    border: .3vh solid #888;
+}
+#mode button svg {
+    width: 3vh;
+    height: 3vh;
+}
+#mode button svg path {
+    stroke: #888;
+    fill: #888;
+}       
+
+#controls {
+    float: right;
+}
+#controls button {
+    color: #ddd;
+	font-size: 2vh;
+	padding: 1vh 0 1vh 2vh;
+    margin: 0 1vh;
+    border: none;
+}
+#controls button svg {
+	fill: #ddd;
+	width: 4vh;
+	height: 4vh;
+	vertical-align: top;
+	margin-top: -0.9vh;
+}
+
+
+/* Settings */
+
+.settings {
+	position: absolute;
+	top: calc(100vh - var(--settings-height));
+	width: 100%;
+	min-height: var(--settings-height);
+	background: #333;
+
+	transition: opacity .3s ease-in-out;
+	opacity: 0.3;
+	pointer-events: none;
+}
+body.connected .settings {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+
+
+/* Pills */
+
+.pills {
+	margin-top: -2.4vh;
+	margin-bottom: 0;
+	display: flex;
+}
+.pills button {
+	margin: 0;
+	padding: 1vh 2vh;
+	border-radius: 0;
+	border-left: none;
+	font-size: 2vh;
+	background: #333;
+}
+.pills button:first-of-type {
+	border-left: .3vh solid #888;
+	border-top-left-radius: 1vh;
+	border-bottom-left-radius: 1vh;
+	margin-left: auto;
+}
+.pills button:last-of-type {
+	border-top-right-radius: 1vh;
+	border-bottom-right-radius: 1vh;
+	margin-right: auto;
+}
+
+body.color button#color,
+body.customize button#customize {
+	background: #888;
+	color: #fff;
+}
+
+
+
+
+
+/* Views */
+
+.views {
+	padding: 6vh 0;
+	min-height: 6vh;
+	display: block;
+}
+.views > div {
+	display: none;
+}
+
+body.color div#colorView,
+body.customize div#customizeView {
+	display: block;
+}
+
+
+
+/* Color picker */
+
+div#colorView > div {
+    width: 50vh;
+    margin: 0 auto;
+}
+#picker {
+    display: block;
+    background: #333;
+	height: 46vh;
+    box-sizing: border-box;
+    transition: opacity 300ms ease;
+}
+.iris-picker * {
+    box-shadow: none !important;
+}
+
+
