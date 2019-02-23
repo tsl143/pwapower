@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .holder {
+        position: relative;
+        padding: 15px 5px;
+        width: 250px;
+        margin: 15px auto;
+        border: 1px solid #444;
+      }
+      .holder label {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        font-size: 12px;
+        background: #444;
+        color: #fff;
+        padding: 2px 5px;
+      }
+      input,
+      select {
+        border: 0;
+        width: calc(100% - 10px);
+        background: #f7f7f7;
+        padding: 5px;
+      }
+      button {
+        background: none;
+        border: 3px #444;
+        border-style: dashed solid;
+        padding: 5px 10px;
+        margin: 10px;
+        min-width: 100px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Speech synthesiser</h1>
+    <div class="holder">
+        <label for="text">Text</label><input type="text" id="voice" placeholder="was willst Du?">
+    </div>
+    <div class="holder">
+        <label for="rate">Rate</label><input type="range" min="0.5" max="2" value="1" step="0.1" id="rate">
+    </div>
+    <div class="holder">
+        <label for="pitch">Pitch</label><input type="range" min="0" max="2" value="1" step="0.1" id="pitch">
+    </div>
+    <div class="holder">
+        <label for="bots">Voices</label><select id="bots" onchange="speak()"></select>
+    </div>
+    <button id="play" onclick="speak()">Play</button>
+    <script>
+        const synth = window.speechSynthesis;
+        const inputTxt = document.getElementById("voice");
+        const voiceSelect = document.getElementById("bots");
+        const pitch = document.getElementById("pitch");
+        const rate = document.getElementById("rate");
+        const voices = synth.getVoices() || [];
+
+        const populateVoiceList = () => {
+            while (voiceSelect.firstChild) {
+                voiceSelect.firstChild.remove();
+            }
+            voices.forEach(v => {
+                const option = document.createElement("option");
+                option.textContent = `${v.name} - ${v.lang}`;
+                option.setAttribute("data-lang", v.lang);
+                option.setAttribute("data-name", v.name);
+                voiceSelect.appendChild(option);
+            });
+        };
+
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
+        const speak = () => {
+            if (synth.speaking) {
+                console.error("already speaking duhhhh!!!");
+                return;
+            }
+            const text = inputTxt.value;
+            const selectedOption = voiceSelect.value || "";
+            const lang = selectedOption.split(" - ");
+
+            if (text !== "" && lang[1]) {
+                var utterThis = new SpeechSynthesisUtterance(text);
+                utterThis.onerror = function (event) {
+                    console.error("SpeechSynthesisUtterance.onerror");
+                };
+
+                utterThis.voice = voices.find(v => v.lang === lang[1]);
+                utterThis.pitch = pitch.value;
+                utterThis.rate = rate.value;
+                synth.speak(utterThis);
+            }
+        };
+    </script>
+  </body>
+</html>

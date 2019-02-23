@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            video {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Page Visibility API</h1>
+        <div>
+            <video id="myMinions" src="minion.mp4" autoplay controls>
+        </div>
+    </body>
+    <script>
+        let hidden, visibilityChange; 
+
+        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        const vid = document.getElementById('myMinions');
+        const handleVisibilityChange = () => {
+            if (document[hidden]) {
+                vid.pause();
+            } else {
+                vid.play();
+            }
+        }
+        document.addEventListener(visibilityChange, handleVisibilityChange, false);
+
+    </script>
+</html>

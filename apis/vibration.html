@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            button {
+                background: none;
+                border: 3px #444;
+                border-style: dashed solid;
+                padding: 5px 10px;
+                margin: 10px;
+                min-width: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Vibration API</h1>
+        <div>
+            <button onclick="vibratePlz.once()">Once</button>
+            <button onclick="vibratePlz.triple()">Sequence</button>
+            <button onclick="vibratePlz.start()">Start</button>
+            <button onclick="vibratePlz.stop()">Stop</button>
+        </div>
+    </body>
+    <script>
+        const vibratePlz = {
+            once: () => window.navigator.vibrate(200),
+            // Alternate sequence of vibrate then wait - 300 vibrate, 200 wait, 400 vibrate ...
+            triple: () => window.navigator.vibrate([300, 200, 400, 200, 300]),
+            clear: () => window.navigator.vibrate(0),
+            start: () => {
+                vibratePlz.vibrateInterval = setInterval(() => {
+                    vibratePlz.once();
+                }, 500);
+            },
+            stop: () => {
+                if (vibratePlz.vibrateInterval) clearInterval(vibratePlz.vibrateInterval);
+                vibratePlz.clear();
+            }
+        }
+    </script>
+</html>
