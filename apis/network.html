@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            label {
+                display: block;
+                margin: 10px;
+            }
+            button {
+                background: none;
+                border: 3px #444;
+                border-style: dashed solid;
+                padding: 5px 10px;
+                margin: 10px;
+                min-width: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Network Info</h1>
+        <h3 id="onlineStatus"></h3>
+        <div id="data"></div>
+    </body>
+    <script>
+        const onlineStatus = document.getElementById('onlineStatus');
+        const dataTable = document.getElementById('data');
+        const updateOnlineStatus = status => onlineStatus.textContent = status?'Online 📶':'Offline 📴';
+        window.addEventListener('online',  () => updateOnlineStatus(true));
+        window.addEventListener('offline',  () => updateOnlineStatus(false));
+        updateOnlineStatus(navigator.onLine);
+
+        const showData = (key, value) => {
+            const label = document.createElement('label');
+            label.textContent = `${key} ➡️ ${value}`;
+            dataTable.appendChild(label)
+        }
+        const updateConnectionStatus = () => {
+            while (dataTable.firstChild) {
+                dataTable.firstChild.remove();
+            }
+            showData('Connection type', navigator.connection.type);
+            showData('Connection bandwidth', navigator.connection.effectiveType);
+            showData('saveData mode', navigator.connection.saveData);
+            showData('Downlink', navigator.connection.downlink);
+        }
+
+        updateConnectionStatus();
+        navigator.connection.addEventListener('change', updateConnectionStatus);
+    </script>
+</html>
