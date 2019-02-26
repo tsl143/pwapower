@@ -63,9 +63,9 @@
         const voiceSelect = document.getElementById("bots");
         const pitch = document.getElementById("pitch");
         const rate = document.getElementById("rate");
-
+        let voices;
         const populateVoiceList = () => {
-            const voices = synth.getVoices() || [];
+            voices = synth.getVoices() || [];
             while (voiceSelect.firstChild) {
                 voiceSelect.firstChild.remove();
             }
