@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #holder {
+                text-align: left;
+                width: 300px;
+                margin: 20px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>PWA POWER</h1>
+        <div id="holder">
+            <ul>
+                <li><a href="apis/network.html">Network Info</a></li>
+                <li><a href="apis/orientation.html">Device orientation</a></li>
+                <li><a href="apis/page-visibility.html">Visibility API</a></li>
+                <li><a href="apis/speech-recognition.html">Speech recognition</a></li>
+                <li><a href="apis/speech-synthesis.html">Speech synthesis</a></li>
+                <li><a href="apis/vibration.html">Vibration API</a></li>
+            </ul>
+        </div>
+    </body>
+    <script>
+        const vibratePlz = {
+            once: () => window.navigator.vibrate(200),
+            // Alternate sequence of vibrate then wait - 300 vibrate, 200 wait, 400 vibrate ...
+            triple: () => window.navigator.vibrate([300, 200, 400, 200, 300]),
+            clear: () => window.navigator.vibrate(0),
+            start: () => {
+                vibratePlz.vibrateInterval = setInterval(() => {
+                    vibratePlz.once();
+                }, 500);
+            },
+            stop: () => {
+                if (vibratePlz.vibrateInterval) clearInterval(vibratePlz.vibrateInterval);
+                vibratePlz.clear();
+            }
+        }
+    </script>
+</html>
