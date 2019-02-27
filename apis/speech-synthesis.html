@@ -94,7 +94,7 @@
             const lang = selectedOption.split(" - ");
 
             if (text !== "" && lang[1]) {
-                var utterThis = new SpeechSynthesisUtterance(text);
+                const utterThis = new SpeechSynthesisUtterance(text);
                 utterThis.onerror = function (event) {
                     console.error("SpeechSynthesisUtterance.onerror");
                 };
