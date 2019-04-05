@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      #video {
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 320px;
+        height: 240px;
+      }
+
+      #photo {
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 320px;
+        height: 240px;
+      }
+
+      #canvas {
+        display: none;
+      }
+
+      .camera {
+        width: 340px;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .output {
+        width: 340px;
+        display: inline-block;
+      }
+
+      #startbutton {
+        display: block;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 32px;
+        background-color: #888;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .contentarea {
+        font-size: 16px;
+        margin: 0 auto;
+        width: 760px;
+      }
+			#filter a {
+				border-right: 1px solid #444;
+				padding: 0 5px;
+			}
+			#filter a:last-child {
+				border: 0;
+			}
+    </style>
+  </head>
+  <body>
+    <div class="contentarea">
+      <h1>
+        Still photo capture
+      </h1>
+      <div>
+        <div class="camera">
+          <video id="video">Video stream not available.</video>
+          <button id="startbutton">Take photo</button>
+        </div>
+        <canvas id="canvas"> </canvas>
+        <div class="output">
+          <img id="photo" alt="The screen capture will appear in this box." />
+        </div>
+			</div>
+			<div id="filter">
+				<a data-type="blur(5px)">Blur</a>
+				<a data-type="contrast(200%)">Contrast</a>
+				<a data-type="grayscale(80%)">Grey</a>
+				<a data-type="hue-rotate(90deg)">Hue rotate</a>
+				<a data-type="drop-shadow(16px 16px 20px red) invert(75%)">Drop shadow</a>
+				<a data-type="">Normal</a>
+			</div>
+    </div>
+  </body>
+  <script>
+    (function() {
+      // The width and height of the captured photo. We will set the
+      // width to the value defined here, but the height will be
+      // calculated based on the aspect ratio of the input stream.
+
+      var width = 320; // We will scale the photo width to this
+      var height = 0; // This will be computed based on the input stream
+
+      // |streaming| indicates whether or not we're currently streaming
+      // video from the camera. Obviously, we start at false.
+
+      var streaming = false;
+
+      // The various HTML elements we need to configure or control. These
+      // will be set by the startup() function.
+
+      var video = null;
+      var canvas = null;
+      var photo = null;
+      var startbutton = null;
+
+      function startup() {
+        video = document.getElementById("video");
+        canvas = document.getElementById("canvas");
+        photo = document.getElementById("photo");
+        startbutton = document.getElementById("startbutton");
+
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: false })
+          .then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+          })
+          .catch(function(err) {
+            console.log("An error occurred: " + err);
+          });
+
+        video.addEventListener(
+          "canplay",
+          function(ev) {
+            if (!streaming) {
+              height = video.videoHeight / (video.videoWidth / width);
+              if (isNaN(height)) {
+                height = width / (4 / 3);
+              }
+              video.setAttribute("width", width);
+              video.setAttribute("height", height);
+              canvas.setAttribute("width", width);
+              canvas.setAttribute("height", height);
+              streaming = true;
+            }
+          },
+          false
+        );
+
+        startbutton.addEventListener(
+          "click",
+          function(ev) {
+            takepicture();
+            ev.preventDefault();
+          },
+          false
+        );
+
+        clearphoto();
+      }
+
+      function clearphoto() {
+        var context = canvas.getContext("2d");
+        context.fillStyle = "#AAA";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        var data = canvas.toDataURL("image/png");
+        photo.setAttribute("src", data);
+      }
+
+      function takepicture() {
+        var context = canvas.getContext("2d");
+        if (width && height) {
+          canvas.width = width;
+          canvas.height = height;
+          context.drawImage(video, 0, 0, width, height);
+
+          var data = canvas.toDataURL("image/png");
+          photo.setAttribute("src", data);
+        } else {
+          clearphoto();
+        }
+      }
+
+			document.getElementById('filter').addEventListener('click', e => {
+				photo.style.filter = e.target.getAttribute('data-type');
+			})
+
+      window.addEventListener("load", startup, false);
+    })();
+  </script>
+</html>
