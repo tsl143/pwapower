@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            button {
+                background: none;
+                border: 3px #444;
+                border-style: dashed solid;
+                padding: 5px 10px;
+                margin: 10px;
+                min-width: 100px;
+            }
+            label {
+                padding: 2px 5px;
+                display: block;
+                margin: 5px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Battery API</h1>
+        <div>
+            <label>Battery Charging? <b id="charging"></b></label>
+            <label>Battery Level? <b id="level"></b></label>
+            <label>Battery charging time? <b id="chargingTime"></b></label>
+            <label>Battery discharge time? <b id="dischargeTime"></b></label>
+        </div>
+    </body>
+    <script>
+        navigator.getBattery().then(function (battery) {
+            console.log(battery)
+            function updateAllBatteryInfo() {
+                document.getElementById('charging').innerHTML= (battery.charging ? "Yes" : "No");
+                document.getElementById('level').innerHTML= Math.floor(battery.level*100);
+                document.getElementById('chargingTime').innerHTML= battery.chargingTime;
+                document.getElementById('dischargeTime').innerHTML= battery.dischargingTime;
+            }
+            updateAllBatteryInfo();
+
+            battery.addEventListener('chargingchange', function () {
+                document.getElementById('charging').innerHTML= (battery.charging ? "Yes" : "No");
+            });
+
+            battery.addEventListener('levelchange', function () {
+                document.getElementById('level').innerHTML= battery.level*100;
+            });
+
+            battery.addEventListener('chargingtimechange', function () {
+                document.getElementById('chargingTime').innerHTML= battery.chargingTime;
+            });
+
+            battery.addEventListener('chargingtimechange', function () {
+                document.getElementById('dischargeTime').innerHTML= battery.dischargingTime;
+            });
+        });
+
+    </script>
+</html>
