@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#570fc2">
         <style>
             body {
                 text-align: center;
@@ -33,20 +35,11 @@
         </div>
     </body>
     <script>
-        const vibratePlz = {
-            once: () => window.navigator.vibrate(200),
-            // Alternate sequence of vibrate then wait - 300 vibrate, 200 wait, 400 vibrate ...
-            triple: () => window.navigator.vibrate([300, 200, 400, 200, 300]),
-            clear: () => window.navigator.vibrate(0),
-            start: () => {
-                vibratePlz.vibrateInterval = setInterval(() => {
-                    vibratePlz.once();
-                }, 500);
-            },
-            stop: () => {
-                if (vibratePlz.vibrateInterval) clearInterval(vibratePlz.vibrateInterval);
-                vibratePlz.clear();
+        if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function () {
+                        console.log('Service Worker Registered');
+                    });
             }
-        }
     </script>
 </html>
