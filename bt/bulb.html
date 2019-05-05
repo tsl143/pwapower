@@ -1,0 +1,301 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="bluetooth_bulb.js"></script>
+		<script src="fileUploader.js"></script>
+		<style>
+		#video {
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 320px;
+        height: 240px;
+      }
+
+      #photo {
+        border: 1px solid black;
+        box-shadow: 2px 2px 3px black;
+        width: 320px;
+        height: 240px;
+      }
+
+      #canvas {
+        display: none;
+      }
+
+      .camera {
+        width: 340px;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      .output {
+        width: 340px;
+        display: inline-block;
+      }
+
+      #startbutton {
+        display: block;
+        position: relative;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 32px;
+        background-color: #888;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 1);
+      }
+
+      .contentarea {
+        font-size: 16px;
+        margin: 0 auto;
+        width: 760px;
+      }
+			</style>
+	</head>
+	<body>
+			<center><button id="connect">CONNECT</button></center>
+			<div style="display:flex">
+				<div id="upload">
+					<div id="imageUpload">
+							<h3>Upload here</h3>
+					</div>
+					<img id="theImage" width="200" >
+				</div>
+				<div id="camera">
+					<div class="camera">
+						<video id="video">Video stream not available.</video>
+						<button id="startbutton">Take photo</button>
+					</div>
+					<canvas id="canvas"> </canvas>
+					<div class="output">
+						<img id="photo" alt="The screen capture will appear in this box." />
+					</div>
+				</div>
+			</div>
+	</body>
+	<script>
+			const divv = new FileUpload({
+					targetElement: 'imageUpload',
+					vaildFiles: ['png','jpg','gif','txt'],
+					onSuccess: onSuccess,
+					onClose: jobDone,
+					maxSize: 2,
+					userData: 'catsPlz',
+					debug: false
+			})
+			function onError(msg){
+					console.log(msg)
+					document.getElementById('result').textContent = ''
+			}
+			function jobDone(){
+					console.log('Job Done')
+			}
+			function onSuccess(data) {
+				const theImage = document.getElementById('theImage');
+				theImage.src=data.dataUrl;
+				lightUp(theImage)
+			}   
+			
+function lightUp(img) {
+	setTimeout(()=> {
+		var rgb = getAverageRGB(img);
+		console.log('color', rgb)
+		document.body.style.backgroundColor = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
+		BluetoothBulb.color = normalizeColor(document.body.style.backgroundColor)
+	}, 500)
+}
+	</script>
+<script>
+	
+
+	function getAverageRGB(imgEl) {
+
+		var blockSize = 5, // only visit every 5 pixels
+			defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+			canvas = document.createElement('canvas'),
+			context = canvas.getContext && canvas.getContext('2d'),
+			data, width, height,
+			i = -4,
+			length,
+			rgb = { r: 0, g: 0, b: 0 },
+			count = 0;
+
+		if (!context) {
+			return defaultRGB;
+		}
+
+		height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+		width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+
+		context.drawImage(imgEl, 0, 0);
+
+		try {
+			data = context.getImageData(0, 0, width, height);
+			console.log('here', data)
+		} catch (e) {
+			alert('x');
+			console.log('fuk', e)
+			return defaultRGB;
+		}
+
+		length = data.data.length;
+
+		while ((i += blockSize * 4) < length) {
+			++count;
+			rgb.r += data.data[i];
+			rgb.g += data.data[i + 1];
+			rgb.b += data.data[i + 2];
+		}
+
+		// ~~ used to floor values
+		rgb.r = ~~(rgb.r / count);
+		rgb.g = ~~(rgb.g / count);
+		rgb.b = ~~(rgb.b / count);
+
+		return rgb;
+
+	}
+
+
+	function normalizeColor(rgb) {
+	if (rgb.search("rgb") == -1) {
+		return rgb;
+	}
+	else if (rgb == 'rgba(0, 0, 0, 0)') {
+		return 'transparent';
+	}
+	else {
+		rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+		
+		function hex(x) {
+		   return ("0" + parseInt(x).toString(16)).slice(-2);
+		}
+		
+		return shadeColor(`#${hex(rgb[1])}${hex(rgb[2])}${hex(rgb[3])}`, -40); 
+	}
+}
+
+function shadeColor(color, percent) {
+
+	var R = parseInt(color.substring(1,3),16);
+	var G = parseInt(color.substring(3,5),16);
+	var B = parseInt(color.substring(5,7),16);
+
+	R = parseInt(R * (100 + percent) / 100);
+	G = parseInt(G * (100 + percent) / 100);
+	B = parseInt(B * (100 + percent) / 100);
+
+	R = (R<255)?R:255;  
+	G = (G<255)?G:255;  
+	B = (B<255)?B:255;  
+
+	var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+	var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+	var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+	return "#"+RR+GG+BB;
+}
+
+	document.getElementById('connect')
+	.addEventListener('click', () => {
+		BluetoothBulb.connect()
+			.then(() => {
+				document.body.classList.add('connected');
+				BluetoothBulb.addEventListener('disconnected', () => {
+					document.body.classList.remove('connected');
+				});
+			});
+	});
+
+
+
+// camera
+
+
+</script>
+
+<script>
+    (function() {
+      var width = 320;
+      var height = 0;
+      var streaming = false;
+
+      var video = null;
+      var canvas = null;
+      var photo = null;
+      var startbutton = null;
+
+      function startup() {
+        video = document.getElementById("video");
+        canvas = document.getElementById("canvas");
+        photo = document.getElementById("photo");
+        startbutton = document.getElementById("startbutton");
+
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: false })
+          .then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+          })
+          .catch(function(err) {
+            console.log("An error occurred: " + err);
+          });
+
+        video.addEventListener(
+          "canplay",
+          function(ev) {
+            if (!streaming) {
+              height = video.videoHeight / (video.videoWidth / width);
+              if (isNaN(height)) {
+                height = width / (4 / 3);
+              }
+              video.setAttribute("width", width);
+              video.setAttribute("height", height);
+              canvas.setAttribute("width", width);
+              canvas.setAttribute("height", height);
+              streaming = true;
+            }
+          },
+          false
+        );
+
+        startbutton.addEventListener(
+          "click",
+          function(ev) {
+            takepicture();
+            ev.preventDefault();
+          },
+          false
+        );
+
+        clearphoto();
+      }
+
+      function clearphoto() {
+        var context = canvas.getContext("2d");
+        context.fillStyle = "#AAA";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        var data = canvas.toDataURL("image/png");
+        photo.setAttribute("src", data);
+      }
+
+      function takepicture() {
+        var context = canvas.getContext("2d");
+        if (width && height) {
+          canvas.width = width;
+          canvas.height = height;
+          context.drawImage(video, 0, 0, width, height);
+
+          var data = canvas.toDataURL("image/png");
+					photo.setAttribute("src", data);
+					lightUp(photo)
+        } else {
+          clearphoto();
+        }
+      }
+
+      window.addEventListener("load", startup, false);
+    })();
+  </script>
+
+</html>

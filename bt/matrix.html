@@ -1,0 +1,93 @@
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<script src="timebox.js"></script>
+	<script src="bluetooth_matrix.js"></script>
+</head>
+
+<body>
+	<button id="connect">Connect</button>
+</body>
+<script>
+	document.getElementById('connect')
+		.addEventListener('click', () => {
+			if (!navigator.bluetooth) return;
+
+			BluetoothMatrix.connect()
+				.then(() => {
+					connect();
+
+					BluetoothMatrix.addEventListener('disconnected', () => {
+						disconnect();
+					});
+				});
+		});
+
+	function connect() {
+		document.body.classList.add('connected');
+	}
+
+	function disconnect() {
+		document.body.classList.remove('connected');
+	}
+
+	function drawPixel(el) {
+		BluetoothMatrix.draw('#FF00FF', 2, 3);
+	}
+
+	async function polish() {
+		for(let i=0; i<5; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#FFFFFF', j, i);
+			}
+		}
+		for(let i=5; i<11; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#FF0000', j, i);
+			}
+		}
+	}
+
+	async function ts() {
+		for(let i=0; i<11; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#0000FF', j, i);
+			}
+		}
+		drawS();
+		drawT();
+	}
+
+	async function drawS() {
+		for(let i=5; i<=9; i=i+2) {
+			await timer(100);
+			BluetoothMatrix.draw('#000000', 9, i);
+			BluetoothMatrix.draw('#000000', 8, i);
+			BluetoothMatrix.draw('#000000', 7, i);
+		}
+		BluetoothMatrix.draw('#000000', 7, 6);
+		BluetoothMatrix.draw('#000000', 9, 8);
+	}
+
+	async function drawT() {
+		for(let i=5; i<=9; i++) {
+			await timer(100);
+			BluetoothMatrix.draw('#000000', 4, i);
+		}
+		BluetoothMatrix.draw('#000000', 3, 5);
+		BluetoothMatrix.draw('#000000', 5, 5);
+	}
+
+	function clear() {
+		BluetoothMatrix.clear();
+	}
+	function timer(ms) {
+		return new Promise(res => setTimeout(res, ms));
+	}
+</script>
+
+</html>
