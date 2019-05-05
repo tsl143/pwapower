@@ -51,6 +51,27 @@
 		}
 	}
 
+	async function italy() {
+		for(let i=0; i<4; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#008000', i, j);
+			}
+		}
+		for(let i=4; i<7; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#FFFFFF', i, j);
+			}
+		}
+		for(let i=7; i<11; i++) {
+				for(let j=0; j<11; j++) {
+					await timer(50);
+					await BluetoothMatrix.draw('#FF0000', i, j);
+			}
+		}
+	}
+
 	async function ts() {
 		for(let i=0; i<11; i++) {
 				for(let j=0; j<11; j++) {
