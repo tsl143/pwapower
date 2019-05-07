@@ -20,6 +20,9 @@
         box-shadow: 2px 2px 3px black;
         width: 320px;
         height: 240px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
       }
 
       #canvas {
@@ -51,7 +54,7 @@
       .contentarea {
         font-size: 16px;
         margin: 0 auto;
-        width: 760px;
+        max-width: 760px;
       }
 			#filter a {
 				border-right: 1px solid #444;
@@ -73,8 +76,7 @@
           <button id="startbutton">Take photo</button>
         </div>
         <canvas id="canvas"> </canvas>
-        <div class="output">
-          <img id="photo" alt="The screen capture will appear in this box." />
+        <div class="output" id="photo">
         </div>
 			</div>
 			<div id="filter">
@@ -150,7 +152,7 @@
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         var data = canvas.toDataURL("image/png");
-        photo.setAttribute("src", data);
+        photo.style.backgroundImage = `url(${data})`;
       }
 
       function takepicture() {
@@ -161,7 +163,7 @@
           context.drawImage(video, 0, 0, width, height);
 
           var data = canvas.toDataURL("image/png");
-          photo.setAttribute("src", data);
+          photo.style.backgroundImage = `url(${data})`;
         } else {
           clearphoto();
         }
