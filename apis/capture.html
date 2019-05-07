@@ -7,6 +7,10 @@
       body {
         text-align: center;
         font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+      }
+      h4 {
+        margin: 10px auto;
       }
       #video {
         border: 1px solid black;
@@ -57,19 +61,18 @@
         max-width: 760px;
       }
 			#filter a {
-				border-right: 1px solid #444;
-				padding: 0 5px;
-			}
-			#filter a:last-child {
-				border: 0;
+        border: 1px solid #444;
+        padding: 3px 5px;
+        display: inline-block;
+        margin: 7px 2px;
 			}
     </style>
   </head>
   <body>
     <div class="contentarea">
-      <h1>
-        Still photo capture
-      </h1>
+      <h4>
+        Media capture
+      </h4>
       <div>
         <div class="camera">
           <video id="video">Video stream not available.</video>
@@ -80,11 +83,11 @@
         </div>
 			</div>
 			<div id="filter">
-				<a data-type="blur(5px)">Blur</a>
+				<a data-type="drop-shadow(16px 16px 20px red) invert(75%)">Drop shadow</a>
 				<a data-type="contrast(200%)">Contrast</a>
 				<a data-type="grayscale(80%)">Grey</a>
 				<a data-type="hue-rotate(90deg)">Hue rotate</a>
-				<a data-type="drop-shadow(16px 16px 20px red) invert(75%)">Drop shadow</a>
+        <a data-type="blur(5px)">Blur</a>
 				<a data-type="">Normal</a>
 			</div>
     </div>
@@ -147,12 +150,8 @@
       }
 
       function clearphoto() {
-        var context = canvas.getContext("2d");
-        context.fillStyle = "#AAA";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        var data = canvas.toDataURL("image/png");
-        photo.style.backgroundImage = `url(${data})`;
+        photo.style.backgroundColor = '#AAA';
+        photo.style.backgroundImage = '';
       }
 
       function takepicture() {
