@@ -101,10 +101,14 @@
 				background-image: url(picture.png)
 			}
 			#connect {
-				background-image: url(bluetooth.png)
+				background-image: url(bluetooth.png);
+				filter: grayscale(100%);
 			}
 			#camera {
 				background-image: url(camera.png)
+			}
+			body.connected #connect {
+				filter: unset;
 			}
 			</style>
 	</head>

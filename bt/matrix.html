@@ -8,11 +8,13 @@
 		body {
 			background: #666;
 		}
+
 		#buttons {
 			text-align: center;
 			margin: 20px auto;
 		}
-		#buttons > button{
+
+		#buttons>button {
 			background-color: transparent;
 			border: 0;
 			width: 32px;
@@ -21,9 +23,16 @@
 			background-size: cover;
 			cursor: pointer;
 		}
+
 		#connect {
-			background-image: url(bluetooth.png)
+			background-image: url(bluetooth.png);
+			filter: grayscale(100%);
 		}
+
+		body.connected #connect {
+			filter: unset;
+		}
+
 		#matrix {
 			margin: 0 auto;
 			border-collapse: collapse;
@@ -31,30 +40,48 @@
 			height: 50vh;
 			cursor: crosshair;
 		}
+
 		#matrix td {
 			border: 0.3vh solid #444;
 			background-color: #000;
 			margin: 0;
 			padding: 0;
 		}
+
 		#colors {
 			text-align: center;
 		}
-		#colors > div {
+
+		#colors>div {
 			display: inline-block;
 			width: 25px;
 			height: 25px;
 			margin: 10px 5px;
 			border-radius: 5px;
 		}
-		#clear {
+
+		.button {
 			background-color: #fff;
 			color: #444;
 			font-weight: bold;
 			border: 1px solid #888;
 			padding: 3px 15px;
 			margin: 0 auto;
-			display: block;
+			display: inline-block;
+		}
+
+		.nobutton {
+			display: inline-block;
+			background: transparent;
+			border: 0;
+			font-size: 25px;
+			vertical-align: middle;
+			cursor: pointer;
+		}
+
+		.center {
+			text-align: center;
+			visibility: middle;
 		}
 	</style>
 </head>
@@ -72,7 +99,12 @@
 		<div id="green" data-color="#00FF00" style="background-color: #0F0;"></div>
 		<div id="blue" data-color="#0000FF" style="background-color: #00F;"></div>
 	</div>
-	<button id="clear">Clear</button>
+	<div class="center">
+		<button class="button" id="clear">Clear</button>
+		<button class="button" id="startit">Start</button>
+		<button class="nobutton" onclick="polish()">🇵🇱</button>
+		<button class="nobutton" onclick="italy()">🇮🇹</button>
+	</div>
 </body>
 <script>
 	buildGrid();
@@ -100,8 +132,11 @@
 		});
 	document.getElementById('colors')
 		.addEventListener('click', e => {
-			console.log(e.target)
 			fillColor = e.target.getAttribute('data-color');
+		});
+	document.getElementById('startit')
+		.addEventListener('click', e => {
+			startButton();
 		});
 	document.getElementById('clear')
 		.addEventListener('click', e => {
@@ -120,46 +155,48 @@
 	}
 
 	async function polish() {
-		for(let i=0; i<5; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#FFFFFF', j, i);
+		clear()
+		for (let i = 0; i < 5; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FFFFFF', j, i);
 			}
 		}
-		for(let i=5; i<11; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#FF0000', j, i);
+		for (let i = 5; i < 11; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FF0000', j, i);
 			}
 		}
 	}
 
 	async function italy() {
-		for(let i=0; i<4; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#008000', i, j);
+		clear();
+		for (let i = 0; i < 4; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#008000', i, j);
 			}
 		}
-		for(let i=4; i<7; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#FFFFFF', i, j);
+		for (let i = 4; i < 7; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FFFFFF', i, j);
 			}
 		}
-		for(let i=7; i<11; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#FF0000', i, j);
+		for (let i = 7; i < 11; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FF0000', i, j);
 			}
 		}
 	}
 
 	async function ts() {
-		for(let i=0; i<11; i++) {
-				for(let j=0; j<11; j++) {
-					await timer(50);
-					await BluetoothMatrix.draw('#0000FF', j, i);
+		for (let i = 0; i < 11; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#0000FF', j, i);
 			}
 		}
 		drawS();
@@ -167,7 +204,7 @@
 	}
 
 	async function drawS() {
-		for(let i=5; i<=9; i=i+2) {
+		for (let i = 5; i <= 9; i = i + 2) {
 			await timer(100);
 			BluetoothMatrix.draw('#000000', 9, i);
 			BluetoothMatrix.draw('#000000', 8, i);
@@ -178,7 +215,7 @@
 	}
 
 	async function drawT() {
-		for(let i=5; i<=9; i++) {
+		for (let i = 5; i <= 9; i++) {
 			await timer(100);
 			BluetoothMatrix.draw('#000000', 4, i);
 		}
@@ -195,9 +232,9 @@
 	}
 	function buildGrid() {
 		theTable = document.getElementById('matrix');
-		for(let i = 0; i<11 ; i++) {
+		for (let i = 0; i < 11; i++) {
 			const tr = document.createElement('tr');
-			for(let j = 0; j<11 ; j++) {
+			for (let j = 0; j < 11; j++) {
 				const td = document.createElement('td');
 				td.setAttribute('data-y', i)
 				td.setAttribute('data-x', j)
@@ -206,6 +243,71 @@
 			theTable.appendChild(tr);
 		}
 	}
+
+
+	var final_transcript = "";
+	var recognizing = false;
+	var recognition = new webkitSpeechRecognition();
+	recognition.continuous = true;
+	recognition.interimResults = true;
+
+	recognition.onstart = function () {
+		recognizing = true;
+	};
+
+	recognition.onerror = function (event) { };
+
+	recognition.onend = function () {
+		recognizing = false;
+		if (!final_transcript) {
+			return;
+		}
+		if (window.getSelection) {
+			window.getSelection().removeAllRanges();
+			var range = document.createRange();
+			range.selectNode(document.getElementById("final_span"));
+			window.getSelection().addRange(range);
+		}
+
+	};
+
+	recognition.onresult = function (event) {
+		var interim_transcript = "";
+		if (typeof event.results == "undefined") {
+			recognition.onend = null;
+			recognition.stop();
+			return;
+		}
+		for (var i = event.resultIndex; i < event.results.length; ++i) {
+			if (event.results[i].isFinal) {
+				final_transcript += event.results[i][0].transcript;
+			} else {
+				interim_transcript += event.results[i][0].transcript;
+			}
+		}
+		console.log(final_transcript);
+		if (final_transcript.toLowerCase().includes('poland')) {
+			polish();
+			final_transcript = '';
+		}
+		if (final_transcript.toLowerCase().includes('italy')) {
+			italy();
+			final_transcript = '';
+		}
+	};
+
+
+
+	function startButton(event) {
+		if (recognizing) {
+			recognition.stop();
+			return;
+		}
+		final_transcript = "";
+		recognition.lang = 'en-US';
+		recognition.start();
+	}
+
 </script>
 
 </html>
