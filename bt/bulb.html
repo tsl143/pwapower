@@ -4,7 +4,39 @@
 		<script src="bluetooth_bulb.js"></script>
 		<script src="fileUploader.js"></script>
 		<style>
-		#video {
+			body{
+				margin: 0;
+				font-family: Arial;
+			}
+			#cameraShow {
+				text-align: center;
+			}
+			#upload {
+				background-color: #f7f7f7;
+				width: 300px;
+				margin: 0 auto;
+				height: 200px;
+				padding: 50px;
+				overflow-y: auto;
+				position: relative;
+				
+			}
+			#imageUpload {
+				background-image: url(upload.png);
+				background-size: cover;
+				height: 100%;
+				width: 67%;
+				margin: 0 auto;
+			}
+			#close {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+			}
+			#theImage{
+				width: 100%;
+			}
+			#video {
         border: 1px solid black;
         box-shadow: 2px 2px 3px black;
         width: 320px;
@@ -49,18 +81,47 @@
         margin: 0 auto;
         width: 760px;
       }
+			.hidden {
+				display: none;
+			}
+			#buttons {
+				text-align: center;
+				margin: 20px 0;
+			}
+			#buttons > button{
+				background-color: transparent;
+				border: 0;
+				width: 32px;
+				height: 32px;
+				margin: 0 10px;
+				background-size: cover;
+				cursor: pointer;
+			}
+			#image {
+				background-image: url(picture.png)
+			}
+			#connect {
+				background-image: url(bluetooth.png)
+			}
+			#camera {
+				background-image: url(camera.png)
+			}
 			</style>
 	</head>
 	<body>
-			<center><button id="connect">CONNECT</button></center>
-			<div style="display:flex">
+			<div id="buttons">
+				<button id="image"></button>
+				<button id="connect"></button>
+				<button id="camera"></button>
+			</div>
+
+			<div>
 				<div id="upload">
-					<div id="imageUpload">
-							<h3>Upload here</h3>
-					</div>
-					<img id="theImage" width="200" >
+					<div id="imageUpload"></div>
+					<img id="theImage" class="hidden" width="200" >
+					<div id="close" class="hidden" onclick="resetUploader()">X</div>
 				</div>
-				<div id="camera">
+				<div id="cameraShow" class="hidden">
 					<div class="camera">
 						<video id="video">Video stream not available.</video>
 						<button id="startbutton">Take photo</button>
@@ -73,6 +134,17 @@
 			</div>
 	</body>
 	<script>
+			document.getElementById('image').addEventListener("click", toggleImage, false);
+			document.getElementById('camera').addEventListener("click", toggleCamera, false);
+			function toggleCamera() {
+				document.getElementById('upload').classList.add('hidden');
+				document.getElementById('cameraShow').classList.remove('hidden');
+				startup();
+			}
+			function toggleImage() {
+				document.getElementById('upload').classList.remove('hidden');
+				document.getElementById('cameraShow').classList.add('hidden');
+			}
 			const divv = new FileUpload({
 					targetElement: 'imageUpload',
 					vaildFiles: ['png','jpg','gif','txt'],
@@ -91,18 +163,34 @@
 			}
 			function onSuccess(data) {
 				const theImage = document.getElementById('theImage');
+				const uploader = document.getElementById('imageUpload');
+				const closer = document.getElementById('close');
+
+				theImage.classList.remove('hidden');
+				closer.classList.remove('hidden');
+				uploader.classList.add('hidden');
 				theImage.src=data.dataUrl;
 				lightUp(theImage)
-			}   
+			}
+
+			function resetUploader() {
+				const theImage = document.getElementById('theImage');
+				const uploader = document.getElementById('imageUpload');
+				const closer = document.getElementById('close');
+				theImage.classList.add('hidden');
+				closer.classList.add('hidden');
+				uploader.classList.remove('hidden');
+				document.body.style.background= null
+			}
 			
-function lightUp(img) {
-	setTimeout(()=> {
-		var rgb = getAverageRGB(img);
-		console.log('color', rgb)
-		document.body.style.backgroundColor = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
-		BluetoothBulb.color = normalizeColor(document.body.style.backgroundColor)
-	}, 500)
-}
+			function lightUp(img) {
+				setTimeout(()=> {
+					var rgb = getAverageRGB(img);
+					console.log('color', rgb)
+					document.body.style.backgroundColor = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
+					BluetoothBulb.color = normalizeColor(document.body.style.backgroundColor)
+				}, 500)
+			}
 	</script>
 <script>
 	
@@ -214,88 +302,86 @@ function shadeColor(color, percent) {
 </script>
 
 <script>
-    (function() {
-      var width = 320;
-      var height = 0;
-      var streaming = false;
+	var width = 320;
+	var height = 0;
+	var streaming = false;
 
-      var video = null;
-      var canvas = null;
-      var photo = null;
-      var startbutton = null;
+	var video = null;
+	var canvas = null;
+	var photo = null;
+	var startbutton = null;
 
-      function startup() {
-        video = document.getElementById("video");
-        canvas = document.getElementById("canvas");
-        photo = document.getElementById("photo");
-        startbutton = document.getElementById("startbutton");
+	function startup() {
+		video = document.getElementById("video");
+		canvas = document.getElementById("canvas");
+		photo = document.getElementById("photo");
+		startbutton = document.getElementById("startbutton");
 
-        navigator.mediaDevices
-          .getUserMedia({ video: true, audio: false })
-          .then(function(stream) {
-            video.srcObject = stream;
-            video.play();
-          })
-          .catch(function(err) {
-            console.log("An error occurred: " + err);
-          });
+		navigator.mediaDevices
+			.getUserMedia({ video: true, audio: false })
+			.then(function(stream) {
+				video.srcObject = stream;
+				video.play();
+			})
+			.catch(function(err) {
+				console.log("An error occurred: " + err);
+			});
 
-        video.addEventListener(
-          "canplay",
-          function(ev) {
-            if (!streaming) {
-              height = video.videoHeight / (video.videoWidth / width);
-              if (isNaN(height)) {
-                height = width / (4 / 3);
-              }
-              video.setAttribute("width", width);
-              video.setAttribute("height", height);
-              canvas.setAttribute("width", width);
-              canvas.setAttribute("height", height);
-              streaming = true;
-            }
-          },
-          false
-        );
+		video.addEventListener(
+			"canplay",
+			function(ev) {
+				if (!streaming) {
+					height = video.videoHeight / (video.videoWidth / width);
+					if (isNaN(height)) {
+						height = width / (4 / 3);
+					}
+					video.setAttribute("width", width);
+					video.setAttribute("height", height);
+					canvas.setAttribute("width", width);
+					canvas.setAttribute("height", height);
+					streaming = true;
+				}
+			},
+			false
+		);
 
-        startbutton.addEventListener(
-          "click",
-          function(ev) {
-            takepicture();
-            ev.preventDefault();
-          },
-          false
-        );
+		startbutton.addEventListener(
+			"click",
+			function(ev) {
+				takepicture();
+				ev.preventDefault();
+			},
+			false
+		);
 
-        clearphoto();
-      }
+		clearphoto();
+	}
 
-      function clearphoto() {
-        var context = canvas.getContext("2d");
-        context.fillStyle = "#AAA";
-        context.fillRect(0, 0, canvas.width, canvas.height);
+	function clearphoto() {
+		var context = canvas.getContext("2d");
+		context.fillStyle = "#AAA";
+		context.fillRect(0, 0, canvas.width, canvas.height);
 
-        var data = canvas.toDataURL("image/png");
-        photo.setAttribute("src", data);
-      }
+		var data = canvas.toDataURL("image/png");
+		photo.setAttribute("src", data);
+	}
 
-      function takepicture() {
-        var context = canvas.getContext("2d");
-        if (width && height) {
-          canvas.width = width;
-          canvas.height = height;
-          context.drawImage(video, 0, 0, width, height);
+	function takepicture() {
+		var context = canvas.getContext("2d");
+		if (width && height) {
+			canvas.width = width;
+			canvas.height = height;
+			context.drawImage(video, 0, 0, width, height);
 
-          var data = canvas.toDataURL("image/png");
-					photo.setAttribute("src", data);
-					lightUp(photo)
-        } else {
-          clearphoto();
-        }
-      }
+			var data = canvas.toDataURL("image/png");
+			photo.setAttribute("src", data);
+			lightUp(photo)
+		} else {
+			clearphoto();
+		}
+	}
 
-      window.addEventListener("load", startup, false);
-    })();
+      // window.addEventListener("load", startup, false);
   </script>
 
 </html>

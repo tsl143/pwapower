@@ -12,6 +12,7 @@ class FileUpload {
         this.popupClass = obj.popupClass;
         this.userData = obj.userData;
         this.actionURL = obj.actionURL;
+        this.preview = obj.preview || false;
         this.file = {};
         this.fileType = '';
         this.overlayStyle = `
@@ -109,17 +110,19 @@ class FileUpload {
     //renders a preview if type is image, triggers sendReponse
     handleUploadSuccess(data) {
 
-        const previewDiv = this.createPreview();
+        if(this.preview) {
+            const previewDiv = this.createPreview();
 
-        if(this.fileType=='image')
-            previewDiv.children[0].children[0].src = data.target.result;
-        else
-            previewDiv.children[0].textContent = 'No Preview Available';
-        
-        previewDiv.addEventListener('click',()=>{
-            this.handleClose(previewDiv);
-        })
-        document.body.appendChild(previewDiv);
+            if(this.fileType=='image')
+                previewDiv.children[0].children[0].src = data.target.result;
+            else
+                previewDiv.children[0].textContent = 'No Preview Available';
+            
+            previewDiv.addEventListener('click',()=>{
+                this.handleClose(previewDiv);
+            })
+            document.body.appendChild(previewDiv);
+        }
         
         this.sendReponse(data.target.result);
     }
