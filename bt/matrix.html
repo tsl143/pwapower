@@ -4,12 +4,79 @@
 	<meta charset="utf-8">
 	<script src="timebox.js"></script>
 	<script src="bluetooth_matrix.js"></script>
+	<style>
+		body {
+			background: #666;
+		}
+		#buttons {
+			text-align: center;
+			margin: 20px auto;
+		}
+		#buttons > button{
+			background-color: transparent;
+			border: 0;
+			width: 32px;
+			height: 32px;
+			margin: 0 10px;
+			background-size: cover;
+			cursor: pointer;
+		}
+		#connect {
+			background-image: url(bluetooth.png)
+		}
+		#matrix {
+			margin: 0 auto;
+			border-collapse: collapse;
+			width: 50vh;
+			height: 50vh;
+			cursor: crosshair;
+		}
+		#matrix td {
+			border: 0.3vh solid #444;
+			background-color: #000;
+			margin: 0;
+			padding: 0;
+		}
+		#colors {
+			text-align: center;
+		}
+		#colors > div {
+			display: inline-block;
+			width: 25px;
+			height: 25px;
+			margin: 10px 5px;
+			border-radius: 5px;
+		}
+		#clear {
+			background-color: #fff;
+			color: #444;
+			font-weight: bold;
+			border: 1px solid #888;
+			padding: 3px 15px;
+			margin: 0 auto;
+			display: block;
+		}
+	</style>
 </head>
 
 <body>
-	<button id="connect">Connect</button>
+	<div id="buttons">
+		<button id="connect"></button>
+	</div>
+	<table id="matrix"></table>
+	<div id="colors">
+		<div id="black" data-color="#000000" style="background-color: #000;"></div>
+		<div id="white" data-color="#FFFFFF" style="background-color: #FFF;"></div>
+		<div id="red" data-color="#FF0000" style="background-color: #F00;"></div>
+		<div id="yellow" data-color="#FFFF00" style="background-color: #FF0;"></div>
+		<div id="green" data-color="#00FF00" style="background-color: #0F0;"></div>
+		<div id="blue" data-color="#0000FF" style="background-color: #00F;"></div>
+	</div>
+	<button id="clear">Clear</button>
 </body>
 <script>
+	buildGrid();
+	let fillColor = '#ff0000';
 	document.getElementById('connect')
 		.addEventListener('click', () => {
 			if (!navigator.bluetooth) return;
@@ -24,6 +91,22 @@
 				});
 		});
 
+	document.getElementById('matrix')
+		.addEventListener('click', e => {
+			const x = e.target.getAttribute('data-x');
+			const y = e.target.getAttribute('data-y');
+			e.target.style.backgroundColor = fillColor;
+			BluetoothMatrix.draw(fillColor, x, y);
+		});
+	document.getElementById('colors')
+		.addEventListener('click', e => {
+			console.log(e.target)
+			fillColor = e.target.getAttribute('data-color');
+		});
+	document.getElementById('clear')
+		.addEventListener('click', e => {
+			clear();
+		});
 	function connect() {
 		document.body.classList.add('connected');
 	}
@@ -104,10 +187,24 @@
 	}
 
 	function clear() {
+		document.querySelectorAll('td').forEach(t => t.style.backgroundColor = "#000");
 		BluetoothMatrix.clear();
 	}
 	function timer(ms) {
 		return new Promise(res => setTimeout(res, ms));
+	}
+	function buildGrid() {
+		theTable = document.getElementById('matrix');
+		for(let i = 0; i<11 ; i++) {
+			const tr = document.createElement('tr');
+			for(let j = 0; j<11 ; j++) {
+				const td = document.createElement('td');
+				td.setAttribute('data-y', i)
+				td.setAttribute('data-x', j)
+				tr.appendChild(td)
+			}
+			theTable.appendChild(tr);
+		}
 	}
 </script>
 
