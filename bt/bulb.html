@@ -110,6 +110,18 @@
 			body.connected #connect {
 				filter: unset;
 			}
+			#colors {
+				text-align: center;
+			}
+
+			#colors>div {
+				display: inline-block;
+				width: 25px;
+				height: 25px;
+				margin: 10px 5px;
+				border-radius: 5px;
+				border: 1px solid #444;;
+			}
 			</style>
 	</head>
 	<body>
@@ -136,6 +148,14 @@
 					</div>
 				</div>
 			</div>
+			<div id="colors">
+				<div id="black" data-color="rgb(0,0,0)" style="background-color: #000;"></div>
+				<div id="white" data-color="rgb(255,255,255)" style="background-color: #FFF;"></div>
+				<div id="red" data-color="rgb(255,0,0)" style="background-color: #F00;"></div>
+				<div id="yellow" data-color="rgb(255,255,0)" style="background-color: #FF0;"></div>
+				<div id="green" data-color="rgb(0,255,0)" style="background-color: #0F0;"></div>
+				<div id="blue" data-color="rgb(0,0,255)" style="background-color: #00F;"></div>
+			</div>
 	</body>
 	<script>
 			document.getElementById('image').addEventListener("click", toggleImage, false);
@@ -145,6 +165,13 @@
 				document.getElementById('cameraShow').classList.remove('hidden');
 				startup();
 			}
+
+			document.getElementById('colors')
+			.addEventListener('click', e => {
+				const fillColor = e.target.getAttribute('data-color');
+				if (fillColor) BluetoothBulb.color = normalizeColor(fillColor);
+			});
+
 			function toggleImage() {
 				document.getElementById('upload').classList.remove('hidden');
 				document.getElementById('cameraShow').classList.add('hidden');
@@ -184,7 +211,7 @@
 				theImage.classList.add('hidden');
 				closer.classList.add('hidden');
 				uploader.classList.remove('hidden');
-				document.body.style.background= null
+				document.body.style.background= null;
 			}
 			
 			function lightUp(img) {
