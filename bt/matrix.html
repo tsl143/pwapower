@@ -102,6 +102,7 @@
 	<div class="center">
 		<button class="button" id="clear">Clear</button>
 		<button class="button" id="startit">Start</button>
+		<button class="nobutton" onclick="romania()">🇷🇴</button>
 		<button class="nobutton" onclick="polish()">🇵🇱</button>
 		<button class="nobutton" onclick="italy()">🇮🇹</button>
 	</div>
@@ -192,6 +193,28 @@
 		}
 	}
 
+	async function romania() {
+		clear();
+		for (let i = 1; i < 4; i++) {
+			for (let j = 3; j < 8; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#0000FF', i, j);
+			}
+		}
+		for (let i = 4; i < 7; i++) {
+			for (let j = 3; j < 8; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FFFF00', i, j);
+			}
+		}
+		for (let i = 7; i < 10; i++) {
+			for (let j = 3; j < 8; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FF0000', i, j);
+			}
+		}
+	}
+
 	async function ts() {
 		clear();
 		for (let i = 0; i < 11; i++) {
@@ -202,6 +225,18 @@
 		}
 		drawS();
 		drawT();
+	}
+
+	async function js() {
+		clear();
+		for (let i = 0; i < 11; i++) {
+			for (let j = 0; j < 11; j++) {
+				await timer(50);
+				await BluetoothMatrix.draw('#FFFF00', j, i);
+			}
+		}
+		drawS();
+		drawJ();
 	}
 
 	async function drawS() {
@@ -222,6 +257,16 @@
 		}
 		BluetoothMatrix.draw('#000000', 3, 5);
 		BluetoothMatrix.draw('#000000', 5, 5);
+	}
+
+	async function drawJ() {
+		for (let i = 5; i <= 9; i++) {
+			await timer(100);
+			BluetoothMatrix.draw('#000000', 5, i);
+		}
+		BluetoothMatrix.draw('#000000', 3, 8);
+		BluetoothMatrix.draw('#000000', 3, 9);
+		BluetoothMatrix.draw('#000000', 4, 9);
 	}
 
 	function clear() {
@@ -297,6 +342,14 @@
 		}
 		if (final_transcript.toLowerCase().includes('typescript') || final_transcript.toLowerCase().includes('type script')) {
 			ts();
+			final_transcript = '';
+		}
+		if (final_transcript.toLowerCase().includes('javascript') || final_transcript.toLowerCase().includes('java script')) {
+			js();
+			final_transcript = '';
+		}
+		if (final_transcript.toLowerCase().includes('romania')) {
+			romania();
 			final_transcript = '';
 		}
 	};
