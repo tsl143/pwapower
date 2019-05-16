@@ -158,9 +158,16 @@
 			</div>
 	</body>
 	<script>
+		// mode :
+		// 0 - none
+		// 1 - media
+		// 2 - camera
+
+		let mode = 0;
 			document.getElementById('image').addEventListener("click", toggleImage, false);
 			document.getElementById('camera').addEventListener("click", toggleCamera, false);
 			function toggleCamera() {
+				mode = 2;
 				document.getElementById('upload').classList.add('hidden');
 				document.getElementById('cameraShow').classList.remove('hidden');
 				startup();
@@ -173,6 +180,7 @@
 			});
 
 			function toggleImage() {
+				mode = 1;
 				document.getElementById('upload').classList.remove('hidden');
 				document.getElementById('cameraShow').classList.add('hidden');
 			}
@@ -270,12 +278,15 @@
 		rgb.g = ~~(rgb.g / count);
 		rgb.b = ~~(rgb.b / count);
 
-		if (rgb.r > 150) rgb.r = 255
-			else rgb.r = 0;
-		if (rgb.g > 150) rgb.g = 255
-			else rgb.g = 0;
-		if (rgb.b > 150) rgb.b = 255
-			else rgb.b = 0;
+		// only for camera inout, normalize color to pure rgb
+		if(mode == 2) {
+			if (rgb.r > 150) rgb.r = 255
+				else rgb.r = 0;
+			if (rgb.g > 150) rgb.g = 255
+				else rgb.g = 0;
+			if (rgb.b > 150) rgb.b = 255
+				else rgb.b = 0;
+		}
 
 		return rgb;
 
