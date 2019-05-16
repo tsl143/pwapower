@@ -270,6 +270,13 @@
 		rgb.g = ~~(rgb.g / count);
 		rgb.b = ~~(rgb.b / count);
 
+		if (rgb.r > 150) rgb.r = 255
+			else rgb.r = 0;
+		if (rgb.g > 150) rgb.g = 255
+			else rgb.g = 0;
+		if (rgb.b > 150) rgb.b = 255
+			else rgb.b = 0;
+
 		return rgb;
 
 	}
